@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "TicketPack — Ticket to ZIP",
-  "version": "0.3.1",
-  "description": "Review and export ticket details and attachments locally, with optional AI handoff.",
+  "name": "TicketPack — Share with AI",
+  "version": "0.4.0",
+  "description": "Download ticket details and attachments as a ZIP, or prepare them for sharing with your AI app.",
   "minimum_chrome_version": "120",
   "permissions": [
     "activeTab",
@@ -15,7 +15,7 @@
     "http://*/*"
   ],
   "action": {
-    "default_title": "Export this ticket with TicketPack",
+    "default_title": "TicketPack — Download or Share with AI",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",

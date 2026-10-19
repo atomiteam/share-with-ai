@@ -1,81 +1,75 @@
-# TicketPack — Ticket to ZIP
+# TicketPack — Share with AI
 
-A local-first Chrome Manifest V3 extension. Source repository: https://github.com/atomiteam/share-with-ai. Review a ticket, export its text and selected attachments as a ZIP, and optionally open an AI app with a copied prompt. Version 0.3.1 is an unpacked developer build, not a Chrome Web Store listing.
+A local-first Chrome extension to download a ticket and its attachments as a ZIP, with optional handoff to an AI app.
 
-## Install (no Google review needed for local testing)
+Source: https://github.com/atomiteam/share-with-ai
 
-1. Extract `TicketPack-chrome-extension.zip` to a permanent folder.
-2. Open `chrome://extensions` in Chrome.
-3. Enable **Developer mode**, click **Load unpacked**, and select the extracted folder containing `manifest.json`.
-4. Pin TicketPack from Chrome's extensions menu.
-5. Sign in to your ticket system, open one ticket, and click TicketPack.
+## Install
 
-Your organization may restrict developer-mode extensions. A public or unlisted Chrome Web Store release requires a developer account and Google review; this package has not been submitted. No Jira administrator installation is involved, although company browser and data policies still apply.
+Download `store/TicketPack-0.4.0-chrome-store.zip` and extract it to a permanent folder. Open `chrome://extensions`, enable Developer mode, choose Load unpacked and select the extracted folder containing `manifest.json`. Pin TicketPack.
 
-## Use
+For an existing installation, replace the files, click Reload in Chrome's extension settings, close old extension tabs and reopen the extension. Organization-managed browsers may restrict unpacked extensions. This repository does not imply Chrome Web Store approval.
 
-Keep the original ticket tab open. The extension opens a progress tab, captures the ticket, downloads detected attachments, and starts saving the ZIP automatically. Chrome download settings may still show a location prompt. No second Capture or Download click is needed. Select the correct provider manually if a custom domain is not recognized, then click Capture ticket. Review the capture mode and warnings. Edit the title and description, exclude fields, edit or exclude comments, and select attachments. For files hosted elsewhere, click the per-host permission button before downloading. Use Download ZIP to retry or export edited content. A detected attachment failure stops the export by default; grant permission/retry, or explicitly check Allow ZIP with failed attachments.
+## Two actions
 
-A downloaded ZIP contains `ticket.html`, `ticket.md`, `ticket.json`, `export-report.json`, `AI-INSTRUCTIONS.txt`, and selected files under `attachments/`. Open ticket.html after extracting the ZIP. Files get numbered safe names to avoid collisions; original names appear in the metadata. Attachment discovery includes arbitrary download links and binary files, and supplements API metadata with page attachment links. Successfully downloaded attachments have SHA-256 checksums. The report records downloaded, failed and excluded files. The ZIP uses the standard uncompressed STORE format for compatibility; already compressed attachments rarely benefit from recompression.
+Open an individual ticket and click the extension icon. The compact action page opens and starts the download automatically, preserving the previous one-click behavior.
 
-## AI handoff
+- **Download:** Collect current ticket details and all discovered attachments, build the ZIP and wait for Chrome to confirm completion. Click again to create a fresh export.
+- **Share with AI:** Choose ChatGPT, Claude, Gemini or Microsoft Copilot from the app menu. Reuse the ZIP already downloaded in this tab, or create one first. Copy an analysis prompt and open the selected AI app. Attach the ZIP manually and paste the prompt. If the app does not accept ZIP files, extract and attach ticket.md and relevant files individually.
 
-Choose ChatGPT, Claude, Gemini or Microsoft Copilot and click **Download ZIP & open AI**. This starts the download, copies a prompt, and opens the chosen app. Complete/save the download, manually attach the ZIP and paste the prompt. No automatic upload, auto-send, AI credentials or AI API billing is involved. If the app/account does not accept ZIP files, extract the ZIP and attach ticket.md and relevant files individually. File size/type and plan limits depend on the AI app. The prompt is also in AI-INSTRUCTIONS.txt if clipboard access fails.
+The action page does not display the ticket title, description, fields, comments or attachment list. Inspect the content in the ZIP. Progress and completion appear in the status panel. Failures appear in a dedicated error section, with per-file reasons and host-permission buttons where applicable. Partial-capture notices appear separately.
 
-## Provider coverage — read this before relying on an export
+No file is automatically uploaded to AI, and no AI message is sent. If copying the prompt fails, use AI-INSTRUCTIONS.txt in the ZIP. If opening the AI app fails after saving, the page confirms the ZIP is saved and allows retrying Share with AI without downloading it again.
 
-| System | Collection implemented | Important limits |
+## ZIP contents
+
+- `ticket.html`: readable offline document; extract the ZIP before opening.
+- `ticket.md`: text for AI tools and scripts.
+- `ticket.json`: structured ticket metadata, fields and comments.
+- `attachments/`: all discovered original files, with numbered safe filenames and SHA-256 checksums in metadata.
+- `export-report.json`: capture mode and coverage warnings.
+- `AI-INSTRUCTIONS.txt`: suggested analysis prompt.
+
+Attachment failures stop the export; incomplete ZIPs are not saved. The ZIP uses standard uncompressed STORE entries. File sizes are capped at 25 MiB each and 150 MiB of attachment data per export. MP4 headers and known metadata sizes are checked; this is not a media decoder. Partial HTTP responses are retried or rejected. Blob/HLS/DASH previews alone are not original video attachments.
+
+## Supported systems
+
+| System | Implemented collection | Limits |
 |---|---|---|
-| Jira Cloud | REST v3, paginated comments, attachment metadata | Requires access through the existing signed-in browser session; SSO/API policy may block it |
-| Jira Data Center | REST v2 fallback; /jira context paths on /browse URLs | Instance/version specific behavior needs verification |
-| Jira Service Management | Same Jira adapter where an issue key is present | Customer portal permissions may block API access; falls back to visible page |
-| Azure DevOps | Work item fields, paginated comments, AttachedFile relations | Open a /_workitems/edit/ID URL; API 7.1; older Server versions may fall back |
-| GitLab | Issue REST API, paginated notes; attachment links in Markdown | Signed-in session must permit API GET; root-host deployments; custom URL prefixes unsupported |
-| GitHub | Public issue API and paginated comments; attachment links in Markdown | Browser cookies do not authenticate api.github.com. Private issues generally use visible-page fallback. No token storage is implemented |
-| Linear | Visible-page capture | Partial, layout dependent |
-| YouTrack | Visible-page capture | Partial, layout dependent |
-| Redmine | Visible-page capture | Partial, layout dependent |
-| Bugzilla | Visible-page capture | Partial, layout dependent |
-| ServiceNow | Visible-page capture | Partial; framed/shadow DOM pages often need ticket/frame opened directly |
-| Zendesk | Visible-page capture | Partial, layout dependent |
-| Freshdesk / Freshservice | Visible-page capture | Partial, layout dependent |
-| Salesforce Service Cloud | Visible-page capture | Partial; shadow DOM content may be inaccessible |
-| Other / custom domains | Generic visible-page capture | Partial; no guarantee the page is a ticket |
+| Jira Cloud | REST v3, paginated comments, original attachment endpoints with redirect=false | Requires the signed-in session and API permissions |
+| Jira Data Center | REST v2 fallback and /jira context paths | Instance/version-specific behavior needs verification |
+| Jira Service Management | Jira adapter where the issue key is available | Portal permissions may restrict API access |
+| Azure DevOps | Fields, paginated comments, AttachedFile relations | Open /_workitems/edit/ID; API 7.1 |
+| GitLab | Issue API, paginated notes, Markdown attachment discovery | Root-host deployments; custom URL prefixes unsupported |
+| GitHub | Public issue API and paginated comments | Private issues generally use visible-page fallback; browser cookies do not authenticate api.github.com |
+| Linear, YouTrack, Redmine, Bugzilla | Partial visible-page capture | Layout-dependent; expand comments first |
+| ServiceNow, Zendesk, Freshdesk/Freshservice, Salesforce Service Cloud | Partial visible-page capture | Frames, shadow DOM and unloaded content may be absent |
+| Other | Generic partial page capture | No completeness guarantee |
 
-Visible-page mode is intentionally labeled **PARTIAL**, both in the review UI and the exported files. Expand all comments/sections before capture. It cannot guarantee all comments, fields or files are present; it may include surrounding page text. Provider selectors are heuristics and may change. No screenshots, frame recursion, linked-ticket traversal, revision histories, worklogs, or segmented/DRM video reconstruction are implemented. Original video attachments and direct video file URLs are supported; blob/HLS/DASH previews alone are not downloadable originals. API mode also is not a complete audit backup; it exports current accessible fields and comments, not every product feature. Comment collection is capped at 100 pages and reports truncation. Any comment-page failure preserves previously collected comments with a warning.
+Jira dashboards and issue-list pages are rejected rather than exported as tickets. Open the actual ticket. Recognized GitHub/GitLab/Azure DevOps list pages are also rejected. Provider detection is automatic; custom deployments may fall back to generic capture.
 
-## Authentication, attachments and privacy
+Partial captures are explicitly labeled in the UI and ZIP. There is no frame recursion, screenshot collection, linked-ticket traversal, revision-history backup, worklog export or segmented-video reconstruction. API comment collection stops after 100 pages and records truncation or page errors.
 
-- Read-only requests; no ticket edits or external server.
-- Existing browser sessions are reused. No passwords, API tokens, cookie extraction, analytics, or persistent ticket storage.
-- `activeTab` and `scripting`: read the tab only after clicking the extension icon. `downloads`: save the ZIP. `clipboardWrite`: copy the AI prompt.
-- Optional HTTP/HTTPS host access is declared broadly to support arbitrary company instances, but external-host permission is requested individually, only when you press its button. Granted host permissions persist until revoked in Chrome's extension settings.
-- Attachments download from the extension context first, with a source-tab fallback for same-origin files; external files require host permission. Session cookies may be sent to that attachment host. SSO, cross-origin redirects, signed URLs and browser cookie restrictions may still block downloads. Failures are recorded, not silently omitted.
-- 25 MiB per attachment, 150 MiB cumulative attachment data. ZIP generation happens in memory. Large text/metadata can increase memory use; close finished review tabs.
-- Ticket data remains in the review tab's memory until closed. The ZIP is saved to disk and can contain confidential information. Preview everything before export; no automatic redaction is claimed. Excluded attachment bytes and their direct download URLs are not included in the ZIP. Ticket text/fields may still contain references or links to them.
-- Avoid opening untrusted attachments. ticket.html escapes source content and disables scripts and remote content with CSP. Original attachments retain their original contents.
+## Privacy and permissions
 
-## Development and validation
+No developer backend, account, analytics, advertising or ticket persistence in Chrome storage. Processing happens in the action tab's memory; completed ZIPs are saved on your computer. Existing browser sessions authorize read-only requests, without extracting passwords or API tokens.
 
-No build step, package installation or remote runtime dependencies. Source files are the installed extension. Run `npm test` with Node 20+ and Python 3 for ZIP interoperability/security tests. Run `python3 scripts/package.py` to build the store-upload ZIP with manifest.json at the archive root. See TEST-RESULTS.md for the checks performed on this build and remaining live-system verification.
+- activeTab and scripting: collect from the selected tab after clicking the icon.
+- downloads: save ZIPs and observe when their save completes or fails.
+- clipboardWrite: copy a prompt only after selecting an AI app.
+- Optional HTTP/HTTPS host permissions: support arbitrary company-hosted ticket and attachment domains. Persistent access is requested for one exact host only after pressing its button in an error section.
 
-To update: replace files in the installed folder, click Reload on chrome://extensions, and reopen the review page. Source changes do not automatically update an already installed copy. To uninstall, remove TicketPack in chrome://extensions.
+Attachment downloads can follow redirects. Cookies may be sent to the applicable ticket/attachment hosts. SSO and cookie restrictions can still block downloads; original error messages are preserved. No automatic redaction is claimed. Ticket data can be confidential; inspect the ZIP before sharing it.
 
-## API references
+See [PRIVACY.md](PRIVACY.md) for the full policy.
 
-- https://developer.atlassian.com/cloud/jira/platform/rest/v3/
-- https://learn.microsoft.com/en-us/rest/api/azure/devops/wit/work-items/get-work-item?view=azure-devops-rest-7.1
-- https://learn.microsoft.com/en-us/rest/api/azure/devops/wit/comments/get-comments?view=azure-devops-rest-7.1
-- https://docs.github.com/en/rest/issues
-- https://docs.github.com/en/rest/issues/comments
-- https://docs.gitlab.com/api/issues/
-- https://docs.gitlab.com/api/notes/
-- https://developer.chrome.com/docs/extensions/develop/concepts/activeTab
+## Development
 
-## Video integrity (0.3)
+No build dependencies. Node 20+ and Python 3 are sufficient.
 
-Downloads bypass the HTTP cache and retry a partial HTTP 206 response with a full-file range request. A remaining partial response, empty file, known metadata size mismatch, login/error document, or unrecognized MP4 header is rejected rather than archived as a successful video. MP4 checks validate the container header, not playback/codec integrity. Same-origin fallback responses go through the same validation. Limits remain 25 MiB per file and 150 MiB total; larger files cause an explicit failure.
+```bash
+npm test
+python3 scripts/package.py
+```
 
-## Jira Cloud download fix (0.3.1)
-
-Jira Cloud attachment URLs use `/rest/api/3/attachment/content/ID?redirect=false` to request the file directly, rather than a media redirect. Duplicate page download links are normalized to the same endpoint. Source-tab errors are serialized explicitly; missing results cannot mask the original error with a null/base64 exception. Both extension and source-tab errors are displayed together. The per-file host permission button is also available for the source host if persistent access is needed.
+Packaging puts manifest.json at the upload ZIP root and excludes tests and development files. See TEST-RESULTS.md and store/SUBMISSION-STATUS.md for validation and publishing status.

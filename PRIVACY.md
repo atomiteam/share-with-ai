@@ -26,7 +26,7 @@ The developer does not sell ticket data, use it for advertising, or transfer it 
 
 ## Controls
 
-You can edit captured text, exclude fields/comments, deselect files and cancel an export. AI file sharing is always manual. Revoke website permissions or uninstall TicketPack in Chrome's extension settings. Delete downloaded ZIP files separately. No account with the extension developer is required.
+The action page provides Download and Share with AI. It does not display the captured ticket content. Open an individual ticket and inspect the downloaded ZIP before sharing. You can cancel a download through Chrome. AI file sharing is always manual. Revoke website permissions or uninstall TicketPack in Chrome's extension settings. Delete downloaded ZIP files separately. No account with the extension developer is required.
 
 ## Changes
 

@@ -1,1 +1,9 @@
-{"name":"ticketpack","version":"0.3.1","private":true,"type":"module","scripts":{"test":"node --test tests/*.test.js"}}
+{
+  "name": "ticketpack",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}

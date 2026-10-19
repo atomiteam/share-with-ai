@@ -148,7 +148,7 @@ globalThis.ticketpackCollect = async function(provider, preferAPI) {
     const link=el.href||el.src;
     if(/attachment|\/uploads\/|\/user-attachments\/|\/secure\/attachment\/|\/assets\/|\.(mp4|m4v|mov|webm|avi|mkv|png|jpe?g|gif|webp|pdf|zip|txt|log|csv|json|har|docx?|xlsx?)(?:$|\?)/i.test(link))add(link,el.innerText?.trim()||el.getAttribute('download')||undefined);
   });
-  warnings.push('PARTIAL: visible-page capture only. Expand all comments and sections first. Hidden, unloaded, iframe and shadow DOM content may be missing. Review and edit before exporting.');
+  warnings.push('PARTIAL: visible-page capture only. Expand all comments and sections first. Hidden, unloaded, iframe and shadow DOM content may be missing. Check the exported ZIP for the captured content.');
   if(document.querySelector('iframe'))warnings.push('This page contains frames. Ticket content inside a frame may not have been captured. Open the ticket frame directly if the preview is empty.');
   return out;
 };

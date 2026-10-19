@@ -1,6 +1,6 @@
 # Chrome Web Store listing
 
-Name: TicketPack — Ticket to ZIP
+Name: TicketPack — Share with AI
 
 Summary: Export a ticket and its attachments to a local ZIP, then optionally open your AI app with a copied analysis prompt.
 
@@ -14,13 +14,13 @@ Privacy policy: https://github.com/atomiteam/share-with-ai/blob/main/PRIVACY.md
 
 Take ticket context with you. Click TicketPack on an open ticket to capture its details, download attachments and create one ZIP on your computer.
 
-The ZIP includes readable offline HTML, Markdown, structured JSON, selected original attachments and an export report. Review or edit captured text, exclude comments/fields, and choose files before retrying an export.
+The ZIP includes readable offline HTML, Markdown, structured JSON, selected original attachments and an export report. The compact action page provides Download and Share with AI. Ticket details stay in the ZIP; dedicated status and error sections show progress, confirmed completion and actionable failures.
 
 API adapters are available for Jira, Azure DevOps, GitHub and GitLab. Private GitHub issues generally use partial visible-page capture without an API credential. Linear, YouTrack, Redmine, Bugzilla, ServiceNow, Zendesk, Freshdesk/Freshservice and Salesforce Service Cloud use partial visible-page capture. Hidden or unloaded content may be missing, and capture quality depends on the site's layout and permissions. Partial captures are labeled.
 
 Optional AI handoff opens ChatGPT, Claude, Gemini or Microsoft Copilot and copies an analysis prompt. Attach the ZIP yourself. TicketPack never automatically uploads tickets or sends messages to an AI service. File support depends on your AI app and plan.
 
-Local processing. No developer backend, account, analytics or advertising. Existing ticket permissions apply. Up to 25 MiB per file and 150 MiB of attachment data per export. Failed downloads stop the ZIP by default and show an error; incomplete exports require an explicit override.
+Local processing. No developer backend, account, analytics or advertising. Existing ticket permissions apply. Up to 25 MiB per file and 150 MiB of attachment data per export. Failed attachment downloads stop the export and show actionable errors. Success is shown only when Chrome confirms the ZIP download is complete.
 
 TicketPack is an independent tool, not affiliated with Atlassian, Microsoft, GitHub, GitLab or the AI services mentioned.
 
@@ -49,7 +49,7 @@ Use a test Jira issue containing a small text file and a small MP4, or a public 
 
 - Complete Google sign-in and developer registration if not already registered.
 - Verify publisher contact details and any required legal/trader declarations; do not invent them.
-- Upload dist/TicketPack-0.3.1-chrome-store.zip.
+- Upload dist/TicketPack-0.4.0-chrome-store.zip.
 - Upload a genuine, non-sensitive extension screenshot at a size accepted by the dashboard. Do not use screenshots of private company tickets.
 - Complete privacy declarations, distribution and review notes.
 - Submit for review. No review submission has yet been made by this repository.
