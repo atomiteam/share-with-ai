@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "TicketPack — Share with AI",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Download ticket details and attachments as a ZIP, or prepare them for sharing with your AI app.",
   "minimum_chrome_version": "120",
   "permissions": [

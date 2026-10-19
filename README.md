@@ -6,7 +6,7 @@ Source: https://github.com/atomiteam/share-with-ai
 
 ## Install
 
-Download `store/TicketPack-0.4.0-chrome-store.zip` and extract it to a permanent folder. Open `chrome://extensions`, enable Developer mode, choose Load unpacked and select the extracted folder containing `manifest.json`. Pin TicketPack.
+Download `store/TicketPack-0.4.1-chrome-store.zip` and extract it to a permanent folder. Open `chrome://extensions`, enable Developer mode, choose Load unpacked and select the extracted folder containing `manifest.json`. Pin TicketPack.
 
 For an existing installation, replace the files, click Reload in Chrome's extension settings, close old extension tabs and reopen the extension. Organization-managed browsers may restrict unpacked extensions. This repository does not imply Chrome Web Store approval.
 
@@ -30,7 +30,7 @@ No file is automatically uploaded to AI, and no AI message is sent. If copying t
 - `export-report.json`: capture mode and coverage warnings.
 - `AI-INSTRUCTIONS.txt`: suggested analysis prompt.
 
-Attachment failures stop the export; incomplete ZIPs are not saved. The ZIP uses standard uncompressed STORE entries. File sizes are capped at 25 MiB each and 150 MiB of attachment data per export. MP4 headers and known metadata sizes are checked; this is not a media decoder. Partial HTTP responses are retried or rejected. Blob/HLS/DASH previews alone are not original video attachments.
+Attachment failures stop the export; incomplete ZIPs are not saved. The ZIP uses standard uncompressed STORE entries. File sizes are capped at 250 MiB each and 500 MiB of attachment data per export. MP4 headers and known metadata sizes are checked; this is not a media decoder. Partial HTTP responses are retried or rejected. Blob/HLS/DASH previews alone are not original video attachments.
 
 ## Supported systems
 

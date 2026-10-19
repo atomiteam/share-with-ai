@@ -20,7 +20,7 @@ API adapters are available for Jira, Azure DevOps, GitHub and GitLab. Private Gi
 
 Optional AI handoff opens ChatGPT, Claude, Gemini or Microsoft Copilot and copies an analysis prompt. Attach the ZIP yourself. TicketPack never automatically uploads tickets or sends messages to an AI service. File support depends on your AI app and plan.
 
-Local processing. No developer backend, account, analytics or advertising. Existing ticket permissions apply. Up to 25 MiB per file and 150 MiB of attachment data per export. Failed attachment downloads stop the export and show actionable errors. Success is shown only when Chrome confirms the ZIP download is complete.
+Local processing. No developer backend, account, analytics or advertising. Existing ticket permissions apply. Up to 250 MiB per file and 500 MiB of attachment data per export. Failed attachment downloads stop the export and show actionable errors. Success is shown only when Chrome confirms the ZIP download is complete.
 
 TicketPack is an independent tool, not affiliated with Atlassian, Microsoft, GitHub, GitLab or the AI services mentioned.
 
@@ -49,7 +49,7 @@ Use a test Jira issue containing a small text file and a small MP4, or a public 
 
 - Complete Google sign-in and developer registration if not already registered.
 - Verify publisher contact details and any required legal/trader declarations; do not invent them.
-- Upload dist/TicketPack-0.4.0-chrome-store.zip.
+- Upload dist/TicketPack-0.4.1-chrome-store.zip.
 - Upload a genuine, non-sensitive extension screenshot at a size accepted by the dashboard. Do not use screenshots of private company tickets.
 - Complete privacy declarations, distribution and review notes.
 - Submit for review. No review submission has yet been made by this repository.

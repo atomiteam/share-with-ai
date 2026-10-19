@@ -4,6 +4,7 @@ import {fetchAttachment,validateAttachment} from './attachments.js';
 import {readAttachmentInTab,requireSourceResult} from './source-fetch.js';
 import {buildTicketZip} from './workflow.js';
 import {saveZipDownload} from './downloads.js';
+import {fileBudget,isAccessFailure,MIB} from './limits.js';
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search),tabId=Number(params.get('tab'));
 const APPS={chatgpt:{name:'ChatGPT',url:'https://chatgpt.com/'},claude:{name:'Claude',url:'https://claude.ai/'},gemini:{name:'Gemini',url:'https://gemini.google.com/'},copilot:{name:'Microsoft Copilot',url:'https://copilot.microsoft.com/'}};
 let busy=false,ticket=null,lastExport=null;const urls=new Set();
@@ -25,14 +26,16 @@ async function captureTicket(){
   result.warnings||=[];return result;
 }
 async function fetchFile(a,remaining){
-  const u=new URL(a.url),origin=new URL(ticket.url).origin,limit=Math.min(25*1048576,remaining);
-  if(a.size>limit)throw Error('File exceeds the 25 MiB per-file or remaining 150 MiB export limit');
+  const u=new URL(a.url),origin=new URL(ticket.url).origin,limit=fileBudget(a.size,remaining);
   if(u.origin!==origin&&!await chrome.permissions.contains({origins:[`${u.origin}/*`]}))throw Error(`Permission needed for ${u.hostname}. Use Allow access below, then retry.`);
   let extensionError;
   try{return await fetchAttachment(a.url,limit,fetch,{name:a.name,expectedSize:a.size});}catch(e){extensionError=e;}
+  if(!isAccessFailure(extensionError))throw extensionError;
+  // Avoid serializing hundreds of MiB through Chrome's script-result channel.
+  if(a.size>25*MIB){const e=Error(`${extensionError.message}. Large-file transfer requires direct extension access to ${u.hostname}. Allow access below and retry.`);e.recoverableAccess=true;throw e;}
   if(u.origin===origin){
     try{
-      const result=requireSourceResult(await inject(readAttachmentInTab,[a.url,limit]));
+      const result=requireSourceResult(await inject(readAttachmentInTab,[a.url,Math.min(limit,25*MIB)]));
       if(result.contentType.includes('text/html')&&!/\.html?$/i.test(a.name))throw Error('Received an HTML login/error page instead of the attachment');
       return validateAttachment(Uint8Array.from(atob(result.base64),c=>c.charCodeAt(0)),{name:a.name,expectedSize:a.size,status:result.status,contentRange:result.contentRange,contentType:result.contentType});
     }catch(e){throw Error(`Extension download: ${extensionError.message}. Source-tab download: ${e.message}`);}
@@ -43,7 +46,7 @@ function showError(error){
   $('errors').hidden=false;$('error-summary').textContent=error.message;
   const failures=error.failures||[];
   for(const f of failures){const li=document.createElement('li');li.textContent=`${f.name}: ${f.message}`;$('error-list').append(li);}
-  for(const origin of new Set(failures.map(f=>f.origin))){
+  for(const origin of new Set(failures.filter(f=>f.recoverableAccess).map(f=>f.origin))){
     const b=document.createElement('button');b.type='button';b.textContent=`Allow access to ${new URL(origin).hostname}`;
     b.onclick=async()=>{try{const allowed=await chrome.permissions.request({origins:[`${origin}/*`]});b.textContent=allowed?'Access allowed — choose Download to retry':'Access declined';}catch(e){b.textContent=e.message;}};
     $('permissions').append(b);

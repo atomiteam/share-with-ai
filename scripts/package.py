@@ -4,7 +4,7 @@ from pathlib import Path
 import json,zipfile
 root=Path(__file__).resolve().parents[1]
 manifest=json.loads((root/'manifest.json').read_text())
-runtime=['manifest.json','background.js','collector.js','core.js','attachments.js','source-fetch.js','workflow.js','downloads.js','export.html','export.js','style.css','zip.js','README.md','PRIVACY.md']
+runtime=['manifest.json','background.js','collector.js','core.js','attachments.js','source-fetch.js','workflow.js','downloads.js','limits.js','export.html','export.js','style.css','zip.js','README.md','PRIVACY.md']
 runtime += [str(p.relative_to(root)) for p in sorted((root/'icons').glob('*.png'))]
 out=root/'dist'/f'TicketPack-{manifest["version"]}-chrome-store.zip'
 out.parent.mkdir(exist_ok=True)
